@@ -1,4 +1,18 @@
-﻿using System;
+﻿/* Copyright 2018 Kay Diefenthal.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -14,7 +28,7 @@ using Cinegy.TsDecoder.TransportStream;
 namespace SatIp
 {
     delegate void SetControlPropertyThreadSafeDelegate(Control control, string propertyName, object propertyValue);
-    delegate void AddResultDelegate(Channel chan);
+    delegate void AddResultDelegate(SatChannel chan);
     public partial class Satellite : UserControl
     {
         private int _count;
@@ -262,11 +276,9 @@ namespace SatIp
 
                                 //else
                                 //{
-                                //    for (var i = 0; i < 5; i++)
-                                //    {
-                                //        if (i >= 5)
-                                //        { Index++; }
-                                //    }
+                                    
+                                //         Index++; 
+                                    
                                 //}
                             }
 
@@ -334,7 +346,7 @@ namespace SatIp
                                                     }
                                                 }
 
-                                        var chan = new Channel
+                                        var chan = new SatChannel
                                         {
                                             ServiceType = desc.ServiceType,
                                             ServiceName = desc.ServiceName.Value,
@@ -425,7 +437,7 @@ namespace SatIp
                     new[] {propertyValue});
         }
 
-        private void AddResults(Channel chan)
+        private void AddResults(SatChannel chan)
         {
             _count++;
 
@@ -445,6 +457,9 @@ namespace SatIp
                     chan.VideoPid.ToString(),
                     chan.AudioPid.ToString(),
                     chan.AC3Pid.ToString(),
+                    chan.EAC3Pid.ToString(),
+                    chan.AACPid.ToString(),
+                    chan.DTSPid.ToString(),
                     chan.TTXPid.ToString(),
                     chan.SubTitlePid.ToString()
                 };

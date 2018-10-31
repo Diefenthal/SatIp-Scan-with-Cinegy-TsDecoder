@@ -49,6 +49,9 @@
             this.colVideo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAudio = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAC3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnEAC3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnAAC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnDTS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colTTX = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colsub = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -62,9 +65,6 @@
             this.lblSourceB = new System.Windows.Forms.Label();
             this.lblSourceA = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.columnAAC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnDTS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnEAC3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -251,15 +251,28 @@
             this.colAC3.Text = "AC3";
             this.colAC3.Width = 50;
             // 
+            // columnEAC3
+            // 
+            this.columnEAC3.Text = "EAC3";
+            this.columnEAC3.Width = 50;
+            // 
+            // columnAAC
+            // 
+            this.columnAAC.Text = "AAC";
+            this.columnAAC.Width = 50;
+            // 
+            // columnDTS
+            // 
+            this.columnDTS.Text = "DTS";
+            this.columnDTS.Width = 50;
+            // 
             // colTTX
             // 
-            this.colTTX.DisplayIndex = 8;
             this.colTTX.Text = "TTX";
             this.colTTX.Width = 50;
             // 
             // colsub
             // 
-            this.colsub.DisplayIndex = 9;
             this.colsub.Text = "Sub";
             this.colsub.Width = 50;
             // 
@@ -374,24 +387,6 @@
             this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 0;
             this.label4.Text = "Diseq C";
-            // 
-            // columnAAC
-            // 
-            this.columnAAC.DisplayIndex = 10;
-            this.columnAAC.Text = "AAC";
-            this.columnAAC.Width = 50;
-            // 
-            // columnDTS
-            // 
-            this.columnDTS.DisplayIndex = 11;
-            this.columnDTS.Text = "DTS";
-            this.columnDTS.Width = 50;
-            // 
-            // columnEAC3
-            // 
-            this.columnEAC3.DisplayIndex = 12;
-            this.columnEAC3.Text = "EAC3";
-            this.columnEAC3.Width = 50;
             // 
             // Satellite
             // 

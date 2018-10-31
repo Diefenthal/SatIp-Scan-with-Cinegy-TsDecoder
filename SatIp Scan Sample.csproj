@@ -125,10 +125,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Channel.cs" />
+    <Compile Include="SatChannel.cs" />
     <Compile Include="GradientLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="IChannel.cs" />
     <Compile Include="Ini\IniMappingContext.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -172,33 +173,33 @@
     <Compile Include="TransponderScan.Designer.cs">
       <DependentUpon>TransponderScan.cs</DependentUpon>
     </Compile>
-    <Compile Include="Ts\Descriptor.cs" />
-    <Compile Include="Ts\DescriptorDictionaries.cs" />
-    <Compile Include="Ts\EsInfo.cs" />
-    <Compile Include="Ts\EventInformationTable.cs" />
-    <Compile Include="Ts\EventInformationTableFactory.cs" />
-    <Compile Include="Ts\ITable.cs" />
-    <Compile Include="Ts\NetworkInformationTable.cs" />
-    <Compile Include="Ts\NetworkInformationTableFactory.cs" />
-    <Compile Include="Ts\PES.cs" />
-    <Compile Include="Ts\ProgramAssociationTable.cs" />
-    <Compile Include="Ts\ProgramAssociationTableFactory.cs" />
-    <Compile Include="Ts\ProgramMapTable.cs" />
-    <Compile Include="Ts\ProgramMapTableFactory.cs" />
-    <Compile Include="Ts\RingBuffer.cs" />
-    <Compile Include="Ts\ServiceDescriptionTable.cs" />
-    <Compile Include="Ts\ServiceDescriptionTableFactory.cs" />
-    <Compile Include="Ts\SpliceInfoTable.cs" />
-    <Compile Include="Ts\SpliceInfoTableFactory.cs" />
-    <Compile Include="Ts\Table.cs" />
-    <Compile Include="Ts\TableChangedEventArgs.cs" />
-    <Compile Include="Ts\TableFactory.cs" />
-    <Compile Include="Ts\Text.cs" />
-    <Compile Include="Ts\TransportStreamEventArgs.cs" />
-    <Compile Include="Ts\TsDecoder.cs" />
-    <Compile Include="Ts\TsPacket.cs" />
-    <Compile Include="Ts\TsPacketFactory.cs" />
-    <Compile Include="Ts\Utils.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\Descriptor.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\DescriptorDictionaries.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\EsInfo.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\EventInformationTable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\EventInformationTableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ITable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\NetworkInformationTable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\NetworkInformationTableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\PES.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ProgramAssociationTable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ProgramAssociationTableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ProgramMapTable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ProgramMapTableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\Buffers\RingBuffer.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ServiceDescriptionTable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\ServiceDescriptionTableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\SpliceInfoTable.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\SpliceInfoTableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\Table.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\TableChangedEventArgs.cs" />
+    <Compile Include="Cinegy\TsDecoder\Tables\TableFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\Text.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\TransportStreamEventArgs.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\TsDecoder.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\TsPacket.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\TsPacketFactory.cs" />
+    <Compile Include="Cinegy\TsDecoder\TransportStream\Utils.cs" />
     <Compile Include="Satellite.cs">
       <SubType>UserControl</SubType>
     </Compile>
