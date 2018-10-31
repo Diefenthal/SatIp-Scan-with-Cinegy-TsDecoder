@@ -166,7 +166,16 @@ namespace SatIp
                         }
 
                         var presentationUrlElement = deviceElement.Element(n0 + "presentationURL");
-                        if (presentationUrlElement != null) PresentationUrl = presentationUrlElement.Value;
+                        if (presentationUrlElement != null)
+                        {
+                            if (presentationUrlElement.Value.StartsWith("Http;//"))
+                                PresentationUrl = presentationUrlElement.Value;
+                            PresentationUrl = locationUri.Scheme + "://" + locationUri.Host;
+                        }
+                        if (presentationUrlElement == null)
+                        {
+                            PresentationUrl = locationUri.Scheme + "://" + locationUri.Host;
+                        }
                         var capabilitiesElement = deviceElement.Element(n1 + "X_SATIPCAP");
                         if (capabilitiesElement != null)
                         {
