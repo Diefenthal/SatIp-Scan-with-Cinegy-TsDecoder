@@ -92,7 +92,7 @@ namespace SatIp
                 if (device != null)
                 {
                     var deviceinfo = new SatIpDeviceInformation(device);
-                    headerlabel.Caption = e.Node.Text;
+                    gradientLabel221.Caption = e.Node.Text;
                     panel1.Controls.Add(deviceinfo);
                     //TransponderScan frm = new TransponderScan(device);
                     //frm.ShowDialog();
@@ -100,18 +100,24 @@ namespace SatIp
             }
             else if (e.Node.Tag != null && e.Node.Tag is CableTuner)
             {
-                headerlabel.Caption = string.Format("{0} - {1}", e.Node.Parent.Name, e.Node.Text);
+                var device = ssdp.FindByUDN(e.Node.Parent.Name);
+                var satinfo = new Cable(device);
+                panel1.Controls.Add(satinfo);
+                gradientLabel221.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
             }
             else if (e.Node.Tag != null && e.Node.Tag is SatelliteTuner)
             {
                 var device = ssdp.FindByUDN(e.Node.Parent.Name);
                 var satinfo = new Satellite(device);
                 panel1.Controls.Add(satinfo);
-                headerlabel.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
+                gradientLabel221.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
             }
             else if (e.Node.Tag != null && e.Node.Tag is TerrestrialTuner)
             {
-                headerlabel.Caption = string.Format("{0} - {1}", e.Node.Parent.Name, e.Node.Text);
+                var device = ssdp.FindByUDN(e.Node.Parent.Name);
+                var satinfo = new Terrestrial(device);
+                panel1.Controls.Add(satinfo);
+                gradientLabel221.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
             }
         }
 

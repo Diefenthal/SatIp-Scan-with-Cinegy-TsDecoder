@@ -1,194 +1,80 @@
-﻿/* Copyright 2018 Kay Diefenthal.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.IO;
+using System.Data;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Cinegy.TsDecoder.TransportStream;
+using System.Threading;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
 using Cinegy.TsDecoder.Tables;
-using Cinegy.TsDecoder.TransportStream;
+using System.Reflection;
+using System.IO;
 
 namespace SatIp
 {
-    delegate void SetControlPropertyThreadSafeDelegate(Control control, string propertyName, object propertyValue);
-    delegate void AddResultDelegate(Channel chan);
-    public partial class Satellite : UserControl
+    public partial class Cable : UserControl
     {
-        private int _count;
-        private readonly TsDecoder _decoder = new TsDecoder();
-        private readonly SatIpDevice _device;
-        private bool _isScanning;
-        private bool _locked;
-        private readonly List<IniMappingContext> _mappings = new List<IniMappingContext>();
-        private IPEndPoint _remoteEndPoint;
+        private SatIpDevice _device;
+        private bool _isScanning = false;
+        private bool _stopScanning = false;
+        private TsDecoder _decoder = new TsDecoder();
+        int _count = 0;
+        private AutoResetEvent _scanThreadStopEvent = null;
         private Thread _scanThread;
-        private AutoResetEvent _scanThreadStopEvent;
-        private bool _stopScanning;
+        private bool _locked;
+        private IPEndPoint _remoteEndPoint;
         private UdpClient _udpclient;
-        private bool nitfound;
         private bool patfound;
         private bool pmtsfound;
+        private bool nitfound;
         private bool sdtfound;
+        List<IniMappingContext> _mappings = new List<IniMappingContext>();
+        public Cable()
+        {
+            InitializeComponent();
+        }
 
-        public Satellite(SatIpDevice device)
+        public Cable(SatIpDevice device)
         {
             InitializeComponent();
             _device = device;
         }
-
-        private void Satellite_Load(object sender, EventArgs e)
-        {
-            if (_device != null && _device.SupportsDVBS)
-            {
-                #region DVBSSources
-
-                cbxDiseqC.Items.Add("None(Single Lnb)");
-                cbxDiseqC.Items.Add("22 KHz (Tone Switch)");
-                cbxDiseqC.Items.Add("Diseq c 1.x (A/B/C/D");
-                cbxDiseqC.SelectedIndex = 0;
-
-                var app = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var tuningdata = app + "\\TuningData\\Satellite";
-                cbxSourceA.Items.Add("- None -");
-                cbxSourceA.SelectedIndex = 0;
-                cbxSourceB.Items.Add("- None -");
-                cbxSourceB.SelectedIndex = 0;
-                cbxSourceC.Items.Add("- None -");
-                cbxSourceC.SelectedIndex = 0;
-                cbxSourceD.Items.Add("- None -");
-                cbxSourceD.SelectedIndex = 0;
-                foreach (var str2 in Directory.GetFiles(tuningdata))
-                {
-                    var reader = new IniReader(str2);
-                    var str3 = reader.ReadString("SATTYPE", "1");
-                    var str4 = reader.ReadString("SATTYPE", "2");
-                    if (!cbxSourceA.Items.Contains(str4) && str4 != "")
-                    {
-                        cbxSourceA.Items.Add(new IniMapping(str3 + " " + str4, str2));
-                        cbxSourceB.Items.Add(new IniMapping(str3 + " " + str4, str2));
-                        cbxSourceC.Items.Add(new IniMapping(str3 + " " + str4, str2));
-                        cbxSourceD.Items.Add(new IniMapping(str3 + " " + str4, str2));
-                    }
-                }
-
-                UpdateSatelliteSettings();
-
-                #endregion
-            }
-        }
-
-        private void UpdateSatelliteSettings()
-        {
-            SuspendLayout();
-            if (cbxDiseqC.SelectedIndex == 0)
-            {
-                lblSourceB.Visible = false;
-                cbxSourceB.Visible = false;
-            }
-            else
-            {
-                lblSourceB.Visible = true;
-                cbxSourceB.Visible = true;
-            }
-
-            if (cbxDiseqC.SelectedIndex == 0 || cbxDiseqC.SelectedIndex == 1)
-            {
-                lblSourceC.Visible = false;
-                cbxSourceC.Visible = false;
-                lblSourceD.Visible = false;
-                cbxSourceD.Visible = false;
-            }
-            else
-            {
-                lblSourceC.Visible = true;
-                cbxSourceC.Visible = true;
-                lblSourceD.Visible = true;
-                cbxSourceD.Visible = true;
-            }
-
-            ResumeLayout();
-        }
-
-        private void CbxDiseqC_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateSatelliteSettings();
-        }
-
-        private void BtnScan_Click(object sender, EventArgs e)
-        {
-            if (cbxDiseqC.SelectedIndex == 0)
-                if (cbxSourceA.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("1", (IniMapping) cbxSourceA.SelectedItem));
-            if (cbxDiseqC.SelectedIndex == 1)
-            {
-                if (cbxSourceA.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("1", (IniMapping) cbxSourceA.SelectedItem));
-                if (cbxSourceB.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("2", (IniMapping) cbxSourceB.SelectedItem));
-            }
-            else
-            {
-                if (cbxSourceA.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("1", (IniMapping) cbxSourceA.SelectedItem));
-                if (cbxSourceB.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("2", (IniMapping) cbxSourceB.SelectedItem));
-                if (cbxSourceC.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("3", (IniMapping) cbxSourceC.SelectedItem));
-                if (cbxSourceD.SelectedItem.ToString() != "- None -")
-                    _mappings.Add(new IniMappingContext("4", (IniMapping) cbxSourceD.SelectedItem));
-            }
-
-            if (_mappings.Count > 0)
-            {
-                if (_isScanning == false)
-                    StartScanThread();
-                else
-                    _stopScanning = true;
-            }
-        }
-
         private void StartScanThread()
         {
-            if (_scanThread != null && !_scanThread.IsAlive) StopScanThread();
+            if (_scanThread != null && !_scanThread.IsAlive)
+            {
+                StopScanThread();
+            }
 
             if (_scanThread == null)
             {
                 _scanThreadStopEvent = new AutoResetEvent(false);
-                _scanThread = new Thread(DoScan)
+                _scanThread = new Thread(new ThreadStart(DoScan))
                 {
                     Name = "SAT>IP Scan",
                     IsBackground = true,
-                    Priority = ThreadPriority.Highest
+                    Priority = ThreadPriority.Highest,
                 };
                 _scanThread.Start();
             }
         }
-
         private void StopScanThread()
         {
             if (_scanThread != null)
             {
                 if (!_scanThread.IsAlive)
+                {
                     _scanThread.Abort();
+                }
                 else
+                {
                     _scanThreadStopEvent.Set();
+                }
                 _scanThread = null;
                 if (_scanThreadStopEvent != null)
                 {
@@ -197,22 +83,21 @@ namespace SatIp
                 }
             }
         }
-
         private void DoScan()
         {
             _decoder.TableChangeDetected += _decoder_TableChangeDetected;
-            var programMapTables = new List<ProgramMapTable>();
+            List<ProgramMapTable> programMapTables = new List<ProgramMapTable>();
             _isScanning = true;
             _stopScanning = false;
             SetControlPropertyThreadSafe(btnScan, "Text", "Stop Search");
             foreach (var mapping in _mappings)
             {
-                var reader = new IniReader(mapping.Mapping.File);
+                IniReader reader = new IniReader(mapping.Mapping.File);
                 var Count = reader.ReadInteger("DVB", "0", 0);
                 try
                 {
                     var Index = 1;
-                    var source = mapping.Source;
+                    string source = mapping.Source;
                     string tuning;
                     while (Index <= Count)
                     {
@@ -226,21 +111,22 @@ namespace SatIp
                         SetControlPropertyThreadSafe(lblSdt, "BackColor", Color.LightGreen);
                         SetControlPropertyThreadSafe(lblNit, "BackColor", Color.LightGreen);
                         if (_stopScanning) return;
-                        var percent = (float) Index / Count;
+                        float percent = ((float)(Index)) / Count;
                         percent *= 100f;
                         if (percent > 100f) percent = 100f;
-                        SetControlPropertyThreadSafe(pgbSearchResult, "Value", (int) percent);
-                        var strArray = reader.ReadString("DVB", Index.ToString()).Split(',');
+                        SetControlPropertyThreadSafe(pgbSearchResult, "Value", (int)percent);
+                        string[] strArray = reader.ReadString("DVB", Index.ToString()).Split(new char[] { ',' });
 
-                        if (strArray[4] == "S2")
-                            tuning = string.Format(
-                                "src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs2&mtype={5}&plts=on&ro=0.35&pids=0",
-                                source, strArray[0], strArray[1].ToLower(), strArray[2].ToLower(), strArray[3],
-                                strArray[5].ToLower());
+                        if (strArray[4] == "C2")
+                        {
+                            //rtsp://192.168.128.5/?freq=793.982&bw=8&msys=dvbc2&c2tft=0&ds=0&plp=0&pids=0,16,100,308,256
+                            tuning = string.Format("freq={0}&bw={1}&msys=dvbc2&c2tft={2}&ds={3}&plp={4}&pids=0", source, strArray[0].ToString(), strArray[1].ToLower().ToString(), strArray[2].ToLower().ToString(), strArray[3].ToString(), strArray[5].ToLower().ToString());
+                        }
                         else
-                            tuning = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs&mtype={5}&pids=0",
-                                source, strArray[0], strArray[1].ToLower(), strArray[2], strArray[3],
-                                strArray[5].ToLower());
+                        {
+                            //rtsp://192.168.128.5/?freq=623.25&msys=dvbc&mtype=256qam&sr=6900&specinv=0&pids=0,16,50,201,301
+                            tuning = string.Format("freq={0}&msys=dvbc&mtype={1}&sr={2}&specinv={3}&pids=0", source, strArray[0].ToString(), strArray[1].ToLower().ToString(), strArray[2].ToString(), strArray[3].ToString(), strArray[5].ToLower().ToString());
+                        }
 
                         RtspStatusCode statuscode;
                         if (string.IsNullOrEmpty(_device.RtspSession.SessionID))
@@ -263,25 +149,29 @@ namespace SatIp
 
                         if (_locked)
                         {
-                            while (!patfound || !pmtsfound || !sdtfound)
+                            while ((!patfound) || (!pmtsfound) || (!sdtfound))
                             {
                                 var receivedbytes = _udpclient.Receive(ref _remoteEndPoint);
-                                var rtp = RtpPacket.Decode(receivedbytes);
+                                RtpPacket rtp = RtpPacket.Decode(receivedbytes);
 
                                 if (rtp.HasPayload)
                                 {
-                                    Logger.Write(rtp.Payload.ToHexString());
+
+                                    Logger.Write(Utils.ToHexString(rtp.Payload));
+
                                     _decoder.AddData(receivedbytes);
                                 }
 
-                                //else
-                                //{
-                                    
-                                //         Index++; 
-                                    
-                                //}
-                            }
+                                else
+                                {
+                                    for (var i = 0; i < 5; i++)
+                                    {
+                                        if (i >= 5)
+                                        { Index++; }
+                                    }
+                                }
 
+                            }
                             lock (_decoder)
                             {
                                 programMapTables = _decoder?.ProgramMapTables.OrderBy(p => p.ProgramNumber).ToList();
@@ -295,12 +185,13 @@ namespace SatIp
                                     short aacpid = -1;
                                     short dtspid = -1;
                                     short eac3pid = -1;
-                                    var desc = _decoder.GetServiceDescriptorForProgramNumber(programMapTable
-                                        ?.ProgramNumber);
+                                    var desc = _decoder.GetServiceDescriptorForProgramNumber(programMapTable?.ProgramNumber);
                                     if (desc != null)
                                     {
                                         if (programMapTable?.EsStreams != null)
+                                        {
                                             foreach (var stream in programMapTable.EsStreams)
+                                            {
                                                 if (stream != null)
                                                 {
                                                     if (stream.Descriptors.OfType<Ac3Descriptor>().Any())
@@ -317,34 +208,28 @@ namespace SatIp
                                                         ttxpid = stream.ElementaryPid;
                                                     switch (stream.StreamType)
                                                     {
-                                                        case 0x01
-                                                            : // ISO/IEC 11172-2 (MPEG-1 video) in a packetized stream
-                                                        case 0x02
-                                                            : // ITU-T Rec. H.262 and ISO/IEC 13818-2 (MPEG-2 higher rate interlaced video) in a packetized stream
-                                                        case 0x1B
-                                                            : // ITU-T Rec. H.264 and ISO/IEC 14496-10 (lower bit-rate video) in a packetized stream                                                        
-                                                        case 0x24
-                                                            : // ITU - T Rec.H.265 and ISO/ IEC 23008 - 2(Ultra HD video) in a packetized stream
-                                                        {
-                                                            videoPid = stream.ElementaryPid;
-                                                            break;
-                                                        }
-                                                        case 0x03
-                                                            : // ISO/IEC 11172-3 (MPEG-1 audio) in a packetized stream
-                                                        case 0x04
-                                                            : // ISO/IEC 13818-3 (MPEG-2 halved sample rate audio) in a packetized stream
+                                                        case 0x01: // ISO/IEC 11172-2 (MPEG-1 video) in a packetized stream
+                                                        case 0x02: // ITU-T Rec. H.262 and ISO/IEC 13818-2 (MPEG-2 higher rate interlaced video) in a packetized stream
+                                                        case 0x1B: // ITU-T Rec. H.264 and ISO/IEC 14496-10 (lower bit-rate video) in a packetized stream                                                        
+                                                        case 0x24: // ITU - T Rec.H.265 and ISO/ IEC 23008 - 2(Ultra HD video) in a packetized stream
+                                                            {
+                                                                videoPid = stream.ElementaryPid;
+                                                                break;
+                                                            }
+                                                        case 0x03: // ISO/IEC 11172-3 (MPEG-1 audio) in a packetized stream
+                                                        case 0x04: // ISO/IEC 13818-3 (MPEG-2 halved sample rate audio) in a packetized stream
 
-                                                        {
-                                                            audioPid = stream.ElementaryPid;
-                                                            break;
-                                                        }
+                                                            {
+                                                                audioPid = stream.ElementaryPid;
+                                                                break;
+                                                            }
                                                         default:
-                                                        {
-                                                            Console.Write(stream.StreamType.ToString());
-                                                            break;
-                                                        }
+                                                            { Console.Write(stream.StreamType.ToString()); break; }
+
                                                     }
                                                 }
+                                            }
+                                        }
 
                                         var chan = new Channel
                                         {
@@ -367,7 +252,6 @@ namespace SatIp
                                 }
                             }
                         }
-
                         Thread.Sleep(5000);
                         Index++;
                     }
@@ -376,7 +260,6 @@ namespace SatIp
                 {
                 }
             }
-
             _device.RtspSession.TearDown();
             SetControlPropertyThreadSafe(pgbSearchResult, "Value", 100);
             _isScanning = false;
@@ -399,13 +282,14 @@ namespace SatIp
                 patfound = true;
                 SetControlPropertyThreadSafe(lblPat, "BackColor", Color.Green);
                 _device.RtspSession.Play("&delpids=0");
-                foreach (var pid in _decoder.ProgramAssociationTable.Pids)
-                    _device.RtspSession.Play(string.Format("&addpids={0}", pid));
+                foreach (short pid in _decoder.ProgramAssociationTable.Pids)
+                { _device.RtspSession.Play(string.Format("&addpids={0}", pid)); }
                 _device.RtspSession.Play("&addpids=17");
             }
             else if (args.TableType == TableType.Pmt)
             {
                 _device.RtspSession.Play(string.Format("&delpids={0}", args.TablePid));
+
             }
             else if (args.TableType == TableType.Sdt)
             {
@@ -414,42 +298,47 @@ namespace SatIp
                 sdtfound = true;
                 SetControlPropertyThreadSafe(lblSdt, "BackColor", Color.Green);
                 _device.RtspSession.Play(string.Format("&delpids={0}", args.TablePid));
+
             }
             else if (args.TableType == TableType.Nit)
             {
                 nitfound = true;
                 SetControlPropertyThreadSafe(lblNit, "BackColor", Color.Green);
                 _device.RtspSession.Play(string.Format("&delpids={0}", args.TablePid));
+
             }
         }
-
         private static void SetControlPropertyThreadSafe(Control control, string propertyName, object propertyValue)
         {
             if (control.InvokeRequired)
+            {
                 control.Invoke(new SetControlPropertyThreadSafeDelegate
-                    (SetControlPropertyThreadSafe), control, propertyName, propertyValue);
+                (SetControlPropertyThreadSafe),
+                new object[] { control, propertyName, propertyValue });
+            }
             else
+            {
                 control.GetType().InvokeMember(
                     propertyName,
                     BindingFlags.SetProperty,
                     null,
                     control,
-                    new[] {propertyValue});
+                    new object[] { propertyValue });
+            }
         }
-
         private void AddResults(Channel chan)
         {
             _count++;
 
             if (lwResults.InvokeRequired)
             {
-                lwResults.Invoke(new AddResultDelegate(AddResults), chan);
+                lwResults.Invoke(new AddResultDelegate(AddResults), new object[] { chan });
             }
             else
             {
-                string[] items =
+                string[] items = new string[]
                 {
-                    chan.ServiceType.ToString(),
+                        chan.ServiceType.ToString(),
                     chan.ServiceName,
                     chan.ServiceProvider,
                     chan.ServiceId.ToString(),
@@ -462,14 +351,59 @@ namespace SatIp
                     chan.DTSPid.ToString(),
                     chan.TTXPid.ToString(),
                     chan.SubTitlePid.ToString()
+
+
                 };
-                var lstItem = new ListViewItem(items)
+                ListViewItem lstItem = new ListViewItem(items)
                 {
-                    Checked = true
+                    Checked = true,
                 };
                 lwResults.Items.Add(lstItem);
 
                 label1.Text = string.Format("Services Found; {0}", _count.ToString());
+            }
+        }
+
+        private void Cable_Load(object sender, EventArgs e)
+        {
+            if ((_device != null) && (_device.SupportsDVBC))
+            {
+                #region DVBSSources                
+
+                var app = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var tuningdata = app + "\\TuningData\\Cable";
+
+                foreach (var str2 in Directory.GetFiles(tuningdata))
+                {
+                    IniReader reader = new IniReader(str2);
+                    var str3 = reader.ReadString("CATTYPE", "1");
+                    var str4 = reader.ReadString("CATTYPE", "2");
+                    if (!cbxSourceA.Items.Contains(str4) && (str4 != ""))
+                    {
+                        cbxSourceA.Items.Add(new IniMapping(str3 + " " + str4, str2));
+
+                    }
+                }
+
+                #endregion
+            }
+        }
+        private void BtnScan_Click(object sender, EventArgs e)
+        {
+
+            if (cbxSourceA.SelectedItem.ToString() != "- None -")
+            { _mappings.Add(new IniMappingContext("1", (IniMapping)cbxSourceA.SelectedItem)); }
+
+            if (_mappings.Count > 0)
+            {
+                if (_isScanning == false)
+                {
+                    StartScanThread();
+                }
+                else
+                {
+                    _stopScanning = true;
+                }
             }
         }
     }

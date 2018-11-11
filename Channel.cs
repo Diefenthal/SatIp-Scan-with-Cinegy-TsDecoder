@@ -14,7 +14,7 @@
 */
 namespace SatIp
 {
-    internal class SatChannel 
+    internal class Channel 
     {
         public decimal Frequency { get; set; }
         public int Sypmbolrate { get; set; }

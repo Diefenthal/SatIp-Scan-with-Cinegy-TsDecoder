@@ -47,7 +47,7 @@ namespace SatIp
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Sat>Ip Server");
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.headerlabel = new SatIp.GradientLabel22();
+            this.gradientLabel221 = new SatIp.GradientLabel22();
             this.SuspendLayout();
             // 
             // treeView1
@@ -69,17 +69,19 @@ namespace SatIp
             this.panel1.Size = new System.Drawing.Size(744, 473);
             this.panel1.TabIndex = 2;
             // 
-            // headerlabel
+            // gradientLabel221
             // 
-            this.headerlabel.Caption = "";
-            this.headerlabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-            this.headerlabel.LastColor = System.Drawing.Color.White;
-            this.headerlabel.Location = new System.Drawing.Point(214, 12);
-            this.headerlabel.Name = "headerlabel";
-            this.headerlabel.Size = new System.Drawing.Size(744, 41);
-            this.headerlabel.TabIndex = 3;
-            this.headerlabel.TextColor = System.Drawing.SystemColors.ControlText;
-            this.headerlabel.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gradientLabel221.Caption = "";
+            this.gradientLabel221.FirstColor = System.Drawing.SystemColors.InactiveCaption;
+            this.gradientLabel221.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gradientLabel221.ForeColor = System.Drawing.SystemColors.Control;
+            this.gradientLabel221.LastColor = System.Drawing.Color.White;
+            this.gradientLabel221.Location = new System.Drawing.Point(214, 13);
+            this.gradientLabel221.Name = "gradientLabel221";
+            this.gradientLabel221.Size = new System.Drawing.Size(744, 40);
+            this.gradientLabel221.TabIndex = 3;
+            this.gradientLabel221.TextColor = System.Drawing.SystemColors.ControlLightLight;
+            this.gradientLabel221.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             // 
             // MainForm
             // 
@@ -87,7 +89,7 @@ namespace SatIp
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(970, 544);
-            this.Controls.Add(this.headerlabel);
+            this.Controls.Add(this.gradientLabel221);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.treeView1);
             this.Name = "MainForm";
@@ -101,7 +103,8 @@ namespace SatIp
 
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Panel panel1;
-        private GradientLabel22 headerlabel;
+        private GradientLabel22 gradientLabel221;
+        //private GradientLabel22 headerlabel;
     }
 }
 

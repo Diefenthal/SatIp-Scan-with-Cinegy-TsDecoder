@@ -305,7 +305,7 @@ namespace SatIp
                                             }
                                         }
 
-                                var chan = new SatChannel
+                                var chan = new Channel
                                 {
                                     ServiceType = desc.ServiceType,
                                     ServiceName = desc.ServiceName.Value,
@@ -373,7 +373,7 @@ namespace SatIp
             }
         }
 
-        private void AddResults(SatChannel chan)
+        private void AddResults(Channel chan)
         {
             //_count++;
 
@@ -513,7 +513,7 @@ namespace SatIp
                                             }
                                         }
 
-                                var chan = new SatChannel
+                                var chan = new Channel
                                 {
                                     ServiceType = desc.ServiceType,
                                     ServiceName = desc.ServiceName.Value,
