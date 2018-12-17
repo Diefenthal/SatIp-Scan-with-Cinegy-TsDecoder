@@ -1,6 +1,6 @@
 ﻿namespace SatIp
 {
-    partial class Cable
+    partial class CableInformtion
     {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -136,6 +136,7 @@
             this.btnScan.TabIndex = 6;
             this.btnScan.Text = "Start Search";
             this.btnScan.UseVisualStyleBackColor = true;
+            this.btnScan.Click += new System.EventHandler(this.BtnScan_Click);
             // 
             // label12
             // 
@@ -276,6 +277,7 @@
             this.Controls.Add(this.groupBox2);
             this.Name = "Cable";
             this.Size = new System.Drawing.Size(740, 469);
+            this.Load += new System.EventHandler(this.Cable_Load);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);

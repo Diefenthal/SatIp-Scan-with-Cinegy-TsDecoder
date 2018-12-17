@@ -125,11 +125,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cable.cs">
+    <Compile Include="CableInformtion.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Cable.Designer.cs">
-      <DependentUpon>Cable.cs</DependentUpon>
+    <Compile Include="CableInformtion.Designer.cs">
+      <DependentUpon>CableInformtion.cs</DependentUpon>
     </Compile>
     <Compile Include="Channel.cs" />
     <Compile Include="GradientLabel.cs">
@@ -172,11 +172,11 @@
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Terrestrial.cs">
+    <Compile Include="TerrestrialInformation.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Terrestrial.Designer.cs">
-      <DependentUpon>Terrestrial.cs</DependentUpon>
+    <Compile Include="TerrestrialInformation.Designer.cs">
+      <DependentUpon>TerrestrialInformation.cs</DependentUpon>
     </Compile>
     <Compile Include="TransmissionMode.cs" />
     <Compile Include="TransponderScan.cs">
@@ -212,15 +212,15 @@
     <Compile Include="Cinegy\TsDecoder\TransportStream\TsPacket.cs" />
     <Compile Include="Cinegy\TsDecoder\TransportStream\TsPacketFactory.cs" />
     <Compile Include="Cinegy\TsDecoder\TransportStream\Utils.cs" />
-    <Compile Include="Satellite.cs">
+    <Compile Include="SatelliteInformation.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Satellite.Designer.cs">
-      <DependentUpon>Satellite.cs</DependentUpon>
+    <Compile Include="SatelliteInformation.Designer.cs">
+      <DependentUpon>SatelliteInformation.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
-    <EmbeddedResource Include="Cable.resx">
-      <DependentUpon>Cable.cs</DependentUpon>
+    <EmbeddedResource Include="CableInformtion.resx">
+      <DependentUpon>CableInformtion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GradientLabel.resx">
       <DependentUpon>GradientLabel.cs</DependentUpon>
@@ -241,14 +241,14 @@
     <EmbeddedResource Include="SatIpDeviceInformation.resx">
       <DependentUpon>SatIpDeviceInformation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Terrestrial.resx">
-      <DependentUpon>Terrestrial.cs</DependentUpon>
+    <EmbeddedResource Include="TerrestrialInformation.resx">
+      <DependentUpon>TerrestrialInformation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TransponderScan.resx">
       <DependentUpon>TransponderScan.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Satellite.resx">
-      <DependentUpon>Satellite.cs</DependentUpon>
+    <EmbeddedResource Include="SatelliteInformation.resx">
+      <DependentUpon>SatelliteInformation.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

@@ -43,6 +43,7 @@ namespace SatIp
             var servernode = treeView1.Nodes[0].Nodes.Add(args.Device.UniqueDeviceName, args.Device.FriendlyName);
             servernode.ToolTipText = args.Device.DeviceDescription;
             servernode.Tag = args.Device;
+            args.Device.RtspSession.Describe();
             foreach (var tuner in args.Device.Tuners)
                 switch (tuner.Type)
                 {
@@ -101,21 +102,21 @@ namespace SatIp
             else if (e.Node.Tag != null && e.Node.Tag is CableTuner)
             {
                 var device = ssdp.FindByUDN(e.Node.Parent.Name);
-                var satinfo = new Cable(device);
+                var satinfo = new CableInformtion(device);
                 panel1.Controls.Add(satinfo);
                 gradientLabel221.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
             }
             else if (e.Node.Tag != null && e.Node.Tag is SatelliteTuner)
             {
                 var device = ssdp.FindByUDN(e.Node.Parent.Name);
-                var satinfo = new Satellite(device);
+                var satinfo = new SatelliteInformation(device);
                 panel1.Controls.Add(satinfo);
                 gradientLabel221.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
             }
             else if (e.Node.Tag != null && e.Node.Tag is TerrestrialTuner)
             {
                 var device = ssdp.FindByUDN(e.Node.Parent.Name);
-                var satinfo = new Terrestrial(device);
+                var satinfo = new TerrestrialInformation(device);
                 panel1.Controls.Add(satinfo);
                 gradientLabel221.Caption = string.Format("{0} - {1}", device.FriendlyName, e.Node.Text);
             }

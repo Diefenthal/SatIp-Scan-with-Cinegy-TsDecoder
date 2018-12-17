@@ -1,6 +1,6 @@
 ﻿namespace SatIp
 {
-    partial class Terrestrial
+    partial class SatelliteInformation
     {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -49,11 +49,22 @@
             this.colVideo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAudio = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAC3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnEAC3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnAAC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnDTS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colTTX = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colsub = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbxSourceD = new System.Windows.Forms.ComboBox();
+            this.cbxSourceC = new System.Windows.Forms.ComboBox();
+            this.cbxSourceB = new System.Windows.Forms.ComboBox();
             this.cbxSourceA = new System.Windows.Forms.ComboBox();
+            this.cbxDiseqC = new System.Windows.Forms.ComboBox();
+            this.lblSourceD = new System.Windows.Forms.Label();
+            this.lblSourceC = new System.Windows.Forms.Label();
+            this.lblSourceB = new System.Windows.Forms.Label();
             this.lblSourceA = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -76,7 +87,7 @@
             this.groupBox3.Location = new System.Drawing.Point(2, 175);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(735, 292);
-            this.groupBox3.TabIndex = 8;
+            this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Search";
             // 
@@ -130,12 +141,13 @@
             // 
             // btnScan
             // 
-            this.btnScan.Location = new System.Drawing.Point(583, 13);
+            this.btnScan.Location = new System.Drawing.Point(609, 13);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(120, 20);
             this.btnScan.TabIndex = 6;
             this.btnScan.Text = "Start Search";
             this.btnScan.UseVisualStyleBackColor = true;
+            this.btnScan.Click += new System.EventHandler(this.BtnScan_Click);
             // 
             // label12
             // 
@@ -187,6 +199,9 @@
             this.colVideo,
             this.colAudio,
             this.colAC3,
+            this.columnEAC3,
+            this.columnAAC,
+            this.columnDTS,
             this.colTTX,
             this.colsub});
             this.lwResults.Location = new System.Drawing.Point(6, 93);
@@ -199,57 +214,114 @@
             // colServiceType
             // 
             this.colServiceType.Text = "ServiceType";
-            this.colServiceType.Width = 100;
+            this.colServiceType.Width = 75;
             // 
             // colServiceName
             // 
             this.colServiceName.Text = "ServiceName";
-            this.colServiceName.Width = 100;
+            this.colServiceName.Width = 80;
             // 
             // colServiceProvider
             // 
             this.colServiceProvider.Text = "ServiceProvider";
-            this.colServiceProvider.Width = 100;
+            this.colServiceProvider.Width = 90;
             // 
             // colServiceId
             // 
             this.colServiceId.Text = "ServiceId";
+            this.colServiceId.Width = 50;
             // 
             // colPCR
             // 
             this.colPCR.Text = "PCR";
+            this.colPCR.Width = 50;
             // 
             // colVideo
             // 
             this.colVideo.Text = "Video";
+            this.colVideo.Width = 50;
             // 
             // colAudio
             // 
             this.colAudio.Text = "Audio";
+            this.colAudio.Width = 50;
             // 
             // colAC3
             // 
             this.colAC3.Text = "AC3";
+            this.colAC3.Width = 50;
+            // 
+            // columnEAC3
+            // 
+            this.columnEAC3.Text = "EAC3";
+            this.columnEAC3.Width = 50;
+            // 
+            // columnAAC
+            // 
+            this.columnAAC.Text = "AAC";
+            this.columnAAC.Width = 50;
+            // 
+            // columnDTS
+            // 
+            this.columnDTS.Text = "DTS";
+            this.columnDTS.Width = 50;
             // 
             // colTTX
             // 
             this.colTTX.Text = "TTX";
+            this.colTTX.Width = 50;
             // 
             // colsub
             // 
             this.colsub.Text = "Sub";
+            this.colsub.Width = 50;
             // 
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox2.Controls.Add(this.cbxSourceD);
+            this.groupBox2.Controls.Add(this.cbxSourceC);
+            this.groupBox2.Controls.Add(this.cbxSourceB);
             this.groupBox2.Controls.Add(this.cbxSourceA);
+            this.groupBox2.Controls.Add(this.cbxDiseqC);
+            this.groupBox2.Controls.Add(this.lblSourceD);
+            this.groupBox2.Controls.Add(this.lblSourceC);
+            this.groupBox2.Controls.Add(this.lblSourceB);
             this.groupBox2.Controls.Add(this.lblSourceA);
+            this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(734, 166);
-            this.groupBox2.TabIndex = 7;
+            this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Sources";
+            // 
+            // cbxSourceD
+            // 
+            this.cbxSourceD.FormattingEnabled = true;
+            this.cbxSourceD.Location = new System.Drawing.Point(117, 132);
+            this.cbxSourceD.Name = "cbxSourceD";
+            this.cbxSourceD.Size = new System.Drawing.Size(536, 21);
+            this.cbxSourceD.TabIndex = 9;
+            this.cbxSourceD.Visible = false;
+            // 
+            // cbxSourceC
+            // 
+            this.cbxSourceC.FormattingEnabled = true;
+            this.cbxSourceC.Location = new System.Drawing.Point(117, 104);
+            this.cbxSourceC.Name = "cbxSourceC";
+            this.cbxSourceC.Size = new System.Drawing.Size(536, 21);
+            this.cbxSourceC.TabIndex = 8;
+            this.cbxSourceC.Visible = false;
+            // 
+            // cbxSourceB
+            // 
+            this.cbxSourceB.FormattingEnabled = true;
+            this.cbxSourceB.Location = new System.Drawing.Point(117, 76);
+            this.cbxSourceB.Name = "cbxSourceB";
+            this.cbxSourceB.Size = new System.Drawing.Size(536, 21);
+            this.cbxSourceB.TabIndex = 7;
+            this.cbxSourceB.Visible = false;
             // 
             // cbxSourceA
             // 
@@ -258,6 +330,45 @@
             this.cbxSourceA.Name = "cbxSourceA";
             this.cbxSourceA.Size = new System.Drawing.Size(536, 21);
             this.cbxSourceA.TabIndex = 6;
+            // 
+            // cbxDiseqC
+            // 
+            this.cbxDiseqC.FormattingEnabled = true;
+            this.cbxDiseqC.Location = new System.Drawing.Point(117, 20);
+            this.cbxDiseqC.Name = "cbxDiseqC";
+            this.cbxDiseqC.Size = new System.Drawing.Size(132, 21);
+            this.cbxDiseqC.TabIndex = 5;
+            this.cbxDiseqC.SelectedIndexChanged += new System.EventHandler(this.CbxDiseqC_SelectedIndexChanged);
+            // 
+            // lblSourceD
+            // 
+            this.lblSourceD.AutoSize = true;
+            this.lblSourceD.Location = new System.Drawing.Point(7, 135);
+            this.lblSourceD.Name = "lblSourceD";
+            this.lblSourceD.Size = new System.Drawing.Size(52, 13);
+            this.lblSourceD.TabIndex = 4;
+            this.lblSourceD.Text = "Source D";
+            this.lblSourceD.Visible = false;
+            // 
+            // lblSourceC
+            // 
+            this.lblSourceC.AutoSize = true;
+            this.lblSourceC.Location = new System.Drawing.Point(7, 107);
+            this.lblSourceC.Name = "lblSourceC";
+            this.lblSourceC.Size = new System.Drawing.Size(51, 13);
+            this.lblSourceC.TabIndex = 3;
+            this.lblSourceC.Text = "Source C";
+            this.lblSourceC.Visible = false;
+            // 
+            // lblSourceB
+            // 
+            this.lblSourceB.AutoSize = true;
+            this.lblSourceB.Location = new System.Drawing.Point(7, 79);
+            this.lblSourceB.Name = "lblSourceB";
+            this.lblSourceB.Size = new System.Drawing.Size(51, 13);
+            this.lblSourceB.TabIndex = 2;
+            this.lblSourceB.Text = "Source B";
+            this.lblSourceB.Visible = false;
             // 
             // lblSourceA
             // 
@@ -268,14 +379,24 @@
             this.lblSourceA.TabIndex = 1;
             this.lblSourceA.Text = "Source A";
             // 
-            // Terrestrial
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 23);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(44, 13);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Diseq C";
+            // 
+            // Satellite
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
-            this.Name = "Terrestrial";
-            this.Size = new System.Drawing.Size(740, 470);
+            this.Name = "Satellite";
+            this.Size = new System.Drawing.Size(744, 473);
+            this.Load += new System.EventHandler(this.Satellite_Load);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -310,7 +431,18 @@
         private System.Windows.Forms.ColumnHeader colTTX;
         private System.Windows.Forms.ColumnHeader colsub;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ComboBox cbxSourceD;
+        private System.Windows.Forms.ComboBox cbxSourceC;
+        private System.Windows.Forms.ComboBox cbxSourceB;
         private System.Windows.Forms.ComboBox cbxSourceA;
+        private System.Windows.Forms.ComboBox cbxDiseqC;
+        private System.Windows.Forms.Label lblSourceD;
+        private System.Windows.Forms.Label lblSourceC;
+        private System.Windows.Forms.Label lblSourceB;
         private System.Windows.Forms.Label lblSourceA;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ColumnHeader columnAAC;
+        private System.Windows.Forms.ColumnHeader columnDTS;
+        private System.Windows.Forms.ColumnHeader columnEAC3;
     }
 }

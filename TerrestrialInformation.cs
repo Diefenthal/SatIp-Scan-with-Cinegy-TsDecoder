@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Cinegy.TsDecoder.TransportStream;
 using System.Threading;
+using Cinegy.TsDecoder.TransportStream;
 using System.Net;
 using System.Net.Sockets;
 using Cinegy.TsDecoder.Tables;
@@ -17,8 +17,9 @@ using System.IO;
 
 namespace SatIp
 {
-    public partial class Cable : UserControl
+    public partial class TerrestrialInformation : UserControl
     {
+
         private SatIpDevice _device;
         private bool _isScanning = false;
         private bool _stopScanning = false;
@@ -34,12 +35,13 @@ namespace SatIp
         private bool nitfound;
         private bool sdtfound;
         List<IniMappingContext> _mappings = new List<IniMappingContext>();
-        public Cable()
+
+        public TerrestrialInformation()
         {
             InitializeComponent();
         }
 
-        public Cable(SatIpDevice device)
+        public TerrestrialInformation(SatIpDevice device)
         {
             InitializeComponent();
             _device = device;
@@ -117,15 +119,17 @@ namespace SatIp
                         SetControlPropertyThreadSafe(pgbSearchResult, "Value", (int)percent);
                         string[] strArray = reader.ReadString("DVB", Index.ToString()).Split(new char[] { ',' });
 
-                        if (strArray[4] == "C2")
+                        if (strArray[2] == "T2")
                         {
-                            //rtsp://192.168.128.5/?freq=793.982&bw=8&msys=dvbc2&c2tft=0&ds=0&plp=0&pids=0,16,100,308,256
-                            tuning = string.Format("freq={0}&bw={1}&msys=dvbc2&c2tft={2}&ds={3}&plp={4}&pids=0", source, strArray[0].ToString(), strArray[1].ToLower().ToString(), strArray[2].ToLower().ToString(), strArray[3].ToString(), strArray[5].ToLower().ToString());
+                            // frequency,bandwith,modulationsystem, modulationtype, guardintervall,fec
+                            tuning = string.Format("freq={0}&bw={1}&msys={2}&pids=0,16",
+                                strArray[0].ToString(), strArray[1].ToLower().ToString(), "dvbt2");
                         }
                         else
                         {
-                            //rtsp://192.168.128.5/?freq=623.25&msys=dvbc&mtype=256qam&sr=6900&specinv=0&pids=0,16,50,201,301
-                            tuning = string.Format("freq={0}&msys=dvbc&mtype={1}&sr={2}&specinv={3}&pids=0", source, strArray[0].ToString(), strArray[1].ToLower().ToString(), strArray[2].ToString(), strArray[3].ToString(), strArray[5].ToLower().ToString());
+                            // frequency,bandwith,modulationsystem, modulationtype, guardintervall,fec
+                            tuning = string.Format("freq={0}&bw={1}&msys={2}&tmode=2k&mtype={3}&gi={4}&fec={5}&pids=0",
+                                strArray[0].ToString(), strArray[1].ToLower().ToString(), "dvbt", strArray[3].ToLower().ToString(), strArray[4].ToLower().ToString(), strArray[5].ToString());
                         }
 
                         RtspStatusCode statuscode;
@@ -145,32 +149,18 @@ namespace SatIp
                         }
 
                         /* Say the Sat>IP server we want Receives the Recieption Details SDP */
-                        statuscode = _device.RtspSession.Describe();
-
+                        statuscode = _device.RtspSession.Describe();                        
                         if (_locked)
-                        {
+                        {                            
                             while ((!patfound) || (!pmtsfound) || (!sdtfound))
                             {
                                 var receivedbytes = _udpclient.Receive(ref _remoteEndPoint);
                                 RtpPacket rtp = RtpPacket.Decode(receivedbytes);
-
                                 if (rtp.HasPayload)
                                 {
-
                                     Logger.Write(Utils.ToHexString(rtp.Payload));
-
                                     _decoder.AddData(receivedbytes);
                                 }
-
-                                else
-                                {
-                                    for (var i = 0; i < 5; i++)
-                                    {
-                                        if (i >= 5)
-                                        { Index++; }
-                                    }
-                                }
-
                             }
                             lock (_decoder)
                             {
@@ -273,7 +263,22 @@ namespace SatIp
             SetControlPropertyThreadSafe(pgbSignalQuality, "Value", e.Quality);
             _locked = e.Locked;
         }
-
+        private List<short[]> SplitArray(short[] input,int size)
+        {
+            List<short[]> sections = new List<short[]>();
+            var l2 = size;
+            for (var i = 0; i < input.Length; i = i + l2)
+            {
+                short[] section = new short[l2];
+                if (input.Length < i + l2)
+                {
+                    l2 = input.Length - i;
+                }
+                Array.Copy(input, i, section, 0, l2);
+                sections.Add(section);
+            }
+            return sections;
+        }
         private void _decoder_TableChangeDetected(object sender, TableChangedEventArgs args)
         {
             //Called for Pat and Nit 
@@ -281,9 +286,10 @@ namespace SatIp
             {
                 patfound = true;
                 SetControlPropertyThreadSafe(lblPat, "BackColor", Color.Green);
-                _device.RtspSession.Play("&delpids=0");
+                _device.RtspSession.Play("&delpids=0");                
                 foreach (short pid in _decoder.ProgramAssociationTable.Pids)
                 { _device.RtspSession.Play(string.Format("&addpids={0}", pid)); }
+                           
                 _device.RtspSession.Play("&addpids=17");
             }
             else if (args.TableType == TableType.Pmt)
@@ -326,9 +332,12 @@ namespace SatIp
                     new object[] { propertyValue });
             }
         }
+        /// <summary>
+        /// Reports the Results into the Listview
+        /// </summary>
+        /// <param name="chan"></param>
         private void AddResults(Channel chan)
-        {
-            _count++;
+        {           
 
             if (lwResults.InvokeRequired)
             {
@@ -336,6 +345,7 @@ namespace SatIp
             }
             else
             {
+                _count++;
                 string[] items = new string[]
                 {
                         chan.ServiceType.ToString(),
@@ -351,39 +361,37 @@ namespace SatIp
                     chan.DTSPid.ToString(),
                     chan.TTXPid.ToString(),
                     chan.SubTitlePid.ToString()
-
-
                 };
                 ListViewItem lstItem = new ListViewItem(items)
                 {
                     Checked = true,
                 };
-                lwResults.Items.Add(lstItem);
-
+                lwResults.Items.Add(lstItem);                
                 label1.Text = string.Format("Services Found; {0}", _count.ToString());
             }
         }
 
-        private void Cable_Load(object sender, EventArgs e)
+        private void Terrestrial_Load(object sender, EventArgs e)
         {
-            if ((_device != null) && (_device.SupportsDVBC))
+            if ((_device != null) && (_device.SupportsDVBT))
             {
-                #region DVBSSources                
-
+                #region DVBTSources                
+                cbxSourceA.Items.Add("- None -");
                 var app = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var tuningdata = app + "\\TuningData\\Cable";
+                var tuningdata = app + "\\TuningData\\Terrestrial";
 
                 foreach (var str2 in Directory.GetFiles(tuningdata))
                 {
                     IniReader reader = new IniReader(str2);
-                    var str3 = reader.ReadString("CATTYPE", "1");
-                    var str4 = reader.ReadString("CATTYPE", "2");
+                    var str3 = reader.ReadString("TERTYPE", "1");
+                    var str4 = reader.ReadString("TERTYPE", "2");
                     if (!cbxSourceA.Items.Contains(str4) && (str4 != ""))
                     {
                         cbxSourceA.Items.Add(new IniMapping(str3 + " " + str4, str2));
 
                     }
                 }
+                cbxSourceA.SelectedIndex = 0;
 
                 #endregion
             }
